@@ -16,17 +16,20 @@ o Logic: Given a specific genre, return a list of books for that genre.
 o HTTP Request Type: GET
 o Parameters Sent: Genre
 o Response Data: JSON List of book objects
+
  Retrieve List of Top Sellers (Top 10 books that have sold the most copied)
 o Logic: Return the top 10 books that have sold the most copies in
 descending order (most copies sold would be #1)
 o HTTP Request Type: GET
 o Parameters Sent: None
 o Response Data : JSON List of book objects
+
  Retrieve List of Books for a particular rating and higher
 o Logic: Filter by rating higher or equal to the passed rating value.
 o HTTP Request Type: GET
 o Parameters Sent: Rating
 o Response Data: JSON List of book objects
+
  Discount books by publisher.
 o Logic: Update the price of all books under a publisher by a discount
 percent.
@@ -45,17 +48,20 @@ o Logic: Provided the user fields, create the user in the database..
 o HTTP Request Type: POST
 o Parameters Sent: User Object
 o Response Data: None
+
  Retrieve a User Object and its fields by their username
 o Logic: Given a specific username, retrieve the user details.
 o HTTP Request Type: GET
 o Parameters Sent: Username
 o Response Data: JSON User object.
+
  Update the user and any of their fields except for mail
 o Logic: Given the username as a key lookup value and any other user
 field, update that user field with the new param value.
 o HTTP Request Type: PUT / PATCH
 o Parameters Sent: Username
 o Response Data: None
+
  Create Credit Card that belongs to a User
 o Logic: Given a user name and credit card details, create a credit
 card for that user.
@@ -71,18 +77,21 @@ o Logic: Give a user Id,return the subtotal of the books in the cart.
 o HTTP Request Type: GET
 o Parameters Sent: User Id
 o Response Data: Calculated Subtotal
+
  Add a book to the shopping cart.
 o Logic: Provided with a book Id and a User Id, add the book to the
 user’s shopping cart.
 o HTTP Request Type: POST
 o Parameters Sent: Book Id, User Id
 o Response Data: None
+
  Retrieve the list of book(s) in the user’s shopping cart.
 o Logic: Give a user Id, return a list of books that are in the shopping
 cart.
 o HTTP Request Type: GET
 o Parameters Sent: User Id
 o Response Data: List of Book Objects
+
  Delete a book from the shopping cart instance for that user.
 o Logic: Given a book If and a User Id, remove the book from the
 user’s shopping cart.
@@ -100,17 +109,20 @@ o Logic: Given a Book’s info, add it to the system.
 o HTTP Request Type: POST
 o Parameters Sent: Book Object
 o Response Data: None
+
  Must be able retrieve a book’s details by the ISBN
 o Logic: Given a book id, retrieve the book information
 o HTTP Request Type: GET
 o Parameters Sent: Book Id
 o Response Data: Book object JSON
+
  An administrator must be able to create an author with first name, last
 name, biography and publisher
 o Logic: Given an Author’s Info, add it to the system.
 o HTTP Request Type: POST
 o Parameters Sent: Author Object
 o Response Data: None
+
  Must be able to retrieve a list of books associated with an author
 o Logic: Given an Author’s Id, return the list of books for that author.
 o HTTP Request Type: GET
@@ -128,16 +140,19 @@ o Logic: Create a rating for a book given by a user.
 o HTTP Request Type: POST
 o Parameters Sent: Rating, User Id, Book Id
 o Response Data: None
+
  Must be able to create a comment for a book by a user with a datestamp
 o Logic: Create a comment for a book given by a user.
 o HTTP Request Type: POST
 o Parameters Sent: Comment, User Id, Book Id
 o Response Data: None
+
  Must be able to retrieve a list of all comments for a particular book.
 o Logic: Retrieve a list of comments for the book
 o HTTP Request Type: GET
 o Parameters Sent: Book Id
 o Response Data: JSON list of comments
+
  Must be able to retrieve the average rating for a book
 o Logic: Given a book Id, calculate the average rating as a decimal.
 o HTTP Request Type: GET
