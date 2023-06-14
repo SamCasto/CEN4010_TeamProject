@@ -22,3 +22,11 @@ class BookList(generics.ListCreateAPIView):
 class BookDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+
+class BookAuthor(generics.ListAPIView):
+    serializer_class = BookSerializer
+
+    def get_queryset(self):
+        author = self.kwargs['author']
+        books = Book.objects.filter(author__iexact=author)
+        return books
