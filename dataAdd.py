@@ -1,6 +1,6 @@
 from bookstore_app.models import Book, Publisher, Author, User
 
-
+#script for importing dummy data into the database
 def populateDb():
     # adding publishers
     publisher1 = Publisher.objects.create(name="Canongate Books")
