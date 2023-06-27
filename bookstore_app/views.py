@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets
 from rest_framework import permissions
 from bookstore_app.serializers import UserSerializer
+from rest_framework.response import Response
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -30,3 +31,21 @@ class BookAuthor(generics.ListAPIView):
         author = self.kwargs['author']
         books = Book.objects.filter(author__iexact=author)
         return books
+
+class BookAuthorID(generics.ListAPIView):
+    serializer_class = BookSerializer
+
+    def get_queryset(self):
+        authorID = self.kwargs['author_id']
+        return Book.objects.filter(author__id=authorID)
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        if not queryset.exists():
+            # Return a custom response if there are no books
+            message = "No books found for the specified author."
+            return Response({'message': message})
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

@@ -31,4 +31,5 @@ urlpatterns = [
     path('books/', views.BookList.as_view(), name='book-list'),
     path('books/<int:pk>/', views.BookDetail.as_view(), name='book-detail'),
     path('books/author/<str:author>/', views.BookAuthor.as_view(), name='book-author'),
+    path('books/authorID/<int:author_id>/books/', views.BookAuthorID.as_view(), name='book_authorID')
 ]
