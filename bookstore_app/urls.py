@@ -1,8 +1,9 @@
 from django.urls import path
-from . import views
+from bookstore_app import views
 
 urlpatterns = [
-    path('books/', views.BookList.as_view(), name='book-list'),
-    path('books/<int:pk>/', views.BookDetail.as_view(), name='book-detail'),
-    # Define other URL patterns for your views...
+    path('register/', views.RegisterAPI.as_view(), name="register"),
+    path('login/', views.LoginAPI.as_view(), name="login"),
+    path('profile/', views.WebsiteUserAPI.as_view(), name='profile'),
+    path('logout/', views.LogoutAPI.as_view(), name='logout')
 ]
