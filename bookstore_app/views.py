@@ -19,6 +19,10 @@ class BookViewSet(viewsets.ModelViewSet):
         self.perform_update(serializer)
         return Response(serializer.data)
 
+class BookList(generics.ListCreateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
 class PublisherViewSet(viewsets.ModelViewSet):
     queryset = Publisher.objects.all()
     serializer_class = PublisherSerializer
@@ -43,6 +47,16 @@ class RegisterAPI(views.APIView):
         if WebsiteUser.objects.filter(username=data.username).exists():
             return response.Response(data={"message": "Username already in use."}, status=status.HTTP_400_BAD_REQUEST)
 
+        if WebsiteUser.objects.filter(email=data.email).exists():
+            return response.Response(data={"message": "Email already in use."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create the user
+        serializer.instance = user_services.create_user(user_dc=data)
+    
+        print(data)
+
+        return response.Response(data={"User": "created"})
+
 class BookDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
@@ -54,16 +68,6 @@ class BookAuthor(generics.ListAPIView):
         author = self.kwargs['author']
         books = Book.objects.filter(author__iexact=author)
         return books
-        if WebsiteUser.objects.filter(email=data.email).exists():
-            return response.Response(data={"message": "Email already in use."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Create the user
-        serializer.instance = user_services.create_user(user_dc=data)
-    
-        print(data)
-
-        return response.Response(data={"User": "created"})
-
 
 #API endpoint that lets users log into their account, if they have one   
 class LoginAPI(views.APIView):
