@@ -61,13 +61,24 @@ class BookDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
-class BookAuthor(generics.ListAPIView):
+class BookAuthorID(generics.ListAPIView):
     serializer_class = BookSerializer
 
     def get_queryset(self):
-        author = self.kwargs['author']
-        books = Book.objects.filter(author__iexact=author)
+        author_id = self.kwargs['author_id']
+        books = Book.objects.filter(author__id=author_id)
         return books
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        if not queryset.exists():
+            # Return a custom response if there are no books
+            message = "No books found for the specified author."
+            return Response({'message': message})
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 #API endpoint that lets users log into their account, if they have one   
 class LoginAPI(views.APIView):
