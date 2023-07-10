@@ -1,9 +1,9 @@
 from bookstore_app.models import Book, Author, Publisher, WebsiteUser
-from bookstore_app.serializers import BookSerializer, AuthorSerializer, PublisherSerializer, WebsiteUserSerializer
+from bookstore_app.serializers import BookSerializer, AuthorSerializer, PublisherSerializer, WebsiteUserSerializer,UpdateUserSerializer
 from rest_framework.response import Response
 from rest_framework import views, response, exceptions, permissions, viewsets, status, generics
 from bookstore_app import serializers as user_serializers, user_services
-from bookstore_app import authentication
+from bookstore_app import authentication, models
 from rest_framework.permissions import IsAdminUser
 
 
@@ -108,10 +108,12 @@ class WebsiteUserAPI(views.APIView):
 
         return response.Response(serializer.data)
 
+
+
 #Logout endpoint  
 class LogoutAPI(views.APIView):
 
-    authentication_classes = (authentication.CustomUserAuthentication, )
+    authentication_classes = (authentication.CustomUserAuthentication,)
     permission_classes = (permissions.IsAuthenticated, )
 
     def post(self, request):
@@ -127,3 +129,11 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = WebsiteUser.objects.all().order_by('-date_joined')
     serializer_class = WebsiteUserSerializer
     permission_classes = [IsAdminUser]
+
+#API view that lets website users update their profile info
+class UpdateProfileView(generics.UpdateAPIView):
+
+    queryset = WebsiteUser.objects.all()
+    authentication_classes = (authentication.CustomUserAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = UpdateUserSerializer
