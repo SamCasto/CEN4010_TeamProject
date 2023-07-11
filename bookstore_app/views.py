@@ -57,9 +57,28 @@ class RegisterAPI(views.APIView):
 
         return response.Response(data={"User": "created"})
 
-class BookDetail(generics.RetrieveUpdateDestroyAPIView):
+class BookList(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+
+class BookID(generics.ListAPIView):
+    serializer_class = BookSerializer
+    #id is isbn number
+    def get_queryset(self):
+        isbn = self.kwargs['id']
+        books = Book.objects.filter(isbn=isbn)
+        return books
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        if not queryset.exists():
+            # Return a custom response if there are no books
+            message = "No book found for the specified ISBN."
+            return Response({'message': message})
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class BookAuthorID(generics.ListAPIView):
     serializer_class = BookSerializer

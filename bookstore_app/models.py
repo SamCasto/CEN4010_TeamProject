@@ -72,7 +72,7 @@ class Author(models.Model):
     publisher = models.ForeignKey('Publisher', on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.firstName + self.lastName
+        return self.firstName + " " + self.lastName
     
 class Rating(models.Model):
     rating = models.DecimalField(
