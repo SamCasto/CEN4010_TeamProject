@@ -3,12 +3,18 @@ from .models import Book, Author, Publisher, WebsiteUser
 import locale
 from . import user_services
 
-class BookSerializer(serializers.ModelSerializer):
-    publisher = serializers.StringRelatedField()
-    author = serializers.StringRelatedField()
+class BookSerializer(serializers.HyperlinkedModelSerializer):
+    #copies_sold = serializers.IntegerField(required=False, allow_null=True)
+    
+    #copies_sold will be serialized and displayed with the comma separator, while still allowing None values and accepting empty input.
+    # def to_representation(self, instance):
+    #     representation = super().to_representation(instance)
+    #     formatted_copies_sold = locale.format_string("%d", instance.copies_sold, grouping=True) if instance.copies_sold is not None else None
+    #     representation['copies_sold'] = formatted_copies_sold
+    #     return representation
     class Meta:
         model = Book
-        fields = ['url', 'isbn', 'title', 'desc', 'price', 'genre', 'yearPublished', 'copiesSold', 'author', 'publisher']
+        fields = '__all__'
 
 class PublisherSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

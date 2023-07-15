@@ -57,47 +57,17 @@ class RegisterAPI(views.APIView):
 
         return response.Response(data={"User": "created"})
 
-class BookList(generics.ListAPIView):
+class BookDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
-class BookID(generics.ListAPIView):
-    serializer_class = BookSerializer
-    #id is isbn number
-    def get_queryset(self):
-        isbn = self.kwargs['id']
-        books = Book.objects.filter(isbn=isbn)
-        return books
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-
-        if not queryset.exists():
-            # Return a custom response if there are no books
-            message = "No book found for the specified ISBN."
-            return Response({'message': message})
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-
-class BookAuthorID(generics.ListAPIView):
+class BookAuthor(generics.ListAPIView):
     serializer_class = BookSerializer
 
     def get_queryset(self):
-        author_id = self.kwargs['author_id']
-        books = Book.objects.filter(author__id=author_id)
+        author = self.kwargs['author']
+        books = Book.objects.filter(author__iexact=author)
         return books
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-
-        if not queryset.exists():
-            # Return a custom response if there are no books
-            message = "No books found for the specified author."
-            return Response({'message': message})
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
 
 #API endpoint that lets users log into their account, if they have one   
 class LoginAPI(views.APIView):
@@ -167,3 +137,22 @@ class UpdateProfileView(generics.UpdateAPIView):
     authentication_classes = (authentication.CustomUserAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = UpdateUserSerializer
+
+
+class CreateCreditCard(views.APIView):
+    queryset = models.WebsiteUser.objects.all()
+    authentication_classes = (authentication.CustomUserAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = WebsiteUserSerializer
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        credit_card_number = request.data.get("credit_card_number")
+
+        if not credit_card_number:
+            return Response({"error": "Credit card number is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.credit_card_number = credit_card_number
+        user.save()
+        
+        return response.Response(data={"Credit Card": "created"})
