@@ -138,3 +138,10 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = WebsiteUser.objects.all().order_by('-date_joined')
     serializer_class = WebsiteUserSerializer
     permission_classes = [IsAdminUser]
+
+class BookListByGenreView(generics.ListAPIView):
+    serializer_class = BookSerializer
+
+    def get_queryset(self):
+        genre = self.kwargs['genre']
+        return Book.objects.filter(genre=genre)
