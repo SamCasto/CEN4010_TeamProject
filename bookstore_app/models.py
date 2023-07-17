@@ -35,9 +35,9 @@ class BaseUserManager(auth_models.BaseUserManager):
 class WebsiteUser(auth_models.AbstractUser):
     username = models.CharField(verbose_name='Username', max_length=255, unique=True)
     password = models.CharField(max_length=255)
-    first_name = models.CharField(verbose_name="First Name", max_length=255)
-    last_name = models.CharField(verbose_name="Last Name", max_length=255)
-    email = models.EmailField(verbose_name='Email', max_length=255, unique=True)
+    first_name = models.CharField(verbose_name="First Name", max_length=255, blank=True, null=True)
+    last_name = models.CharField(verbose_name="Last Name", max_length=255, blank=True, null=True)
+    email = models.EmailField(verbose_name='Email', max_length=255, unique=True, blank=True, null=True)
     address = models.CharField(verbose_name='Home Address', max_length=255, blank=True, null=True)
     credit_card_number = models.CharField(verbose_name='Credit Card Number', max_length=16, blank=True, null=True)
 
@@ -72,7 +72,7 @@ class Author(models.Model):
     publisher = models.ForeignKey('Publisher', on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.firstName + self.lastName
+        return self.firstName + " " + self.lastName
     
 class Rating(models.Model):
     rating = models.DecimalField(
