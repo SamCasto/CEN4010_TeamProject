@@ -111,5 +111,48 @@ class BookInWishlist(models.Model):
         return str(self.book)
 
 class ShoppingCart(models.Model):
-    user = models.OneToOneField(WebsiteUser, on_delete=models.CASCADE)
-    books = models.ManyToManyField(Book)
+    #user = models.OneToOneField(WebsiteUser, on_delete=models.CASCADE)
+    #books = models.ManyToManyField(Book)
+
+    owner = models.OneToOneField(
+        WebsiteUser,
+        on_delete=models.CASCADE,
+    )
+
+    items = models.ManyToManyField(
+        Book,
+        related_name='carts',
+        through='CartItem'
+    )
+
+    number_of_items = models.PositiveIntegerField(default=0)
+
+    subtotal = models.FloatField(
+        default = 0.00,
+        max_length=6,
+    )
+
+    def __str__(self):
+        return "{}".format(self.pk) if self.pk else "(unsaved)"
+    
+class CartItem(models.Model):
+    item = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        related_name="cartitems"
+    )
+
+    cart = models.ForeignKey(
+        ShoppingCart,
+        on_delete=models.CASCADE,
+        related_name='cartitems',
+    )
+
+    quantity = models.IntegerField(default=1)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['item', 'cart'], name='unique_item_cart')
+        ]
+    def __str__(self):
+        return f"Title: {self.item.title} | Quantity: {self.quantity}"

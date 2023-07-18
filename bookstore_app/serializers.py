@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Book, Author, Publisher, WebsiteUser
+from .models import Book, Author, Publisher, WebsiteUser, ShoppingCart, CartItem
 import locale
 from . import user_services
 
@@ -81,3 +81,13 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+    
+class CartItemSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = CartItem
+        fields = '__all__'
+
+class ShoppingCartSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = ShoppingCart
+        fields = '__all__'

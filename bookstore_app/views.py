@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from urllib.parse import unquote
 from django.db.models import F
 from django.shortcuts import render
@@ -5,6 +6,10 @@ from django.http import JsonResponse
 from decimal import Decimal
 from bookstore_app.models import Book, Author, Publisher, WebsiteUser
 from bookstore_app.serializers import BookSerializer, AuthorSerializer, PublisherSerializer, WebsiteUserSerializer
+=======
+from bookstore_app.models import Book, Author, Publisher, WebsiteUser, ShoppingCart, CartItem
+from bookstore_app.serializers import BookSerializer, AuthorSerializer, PublisherSerializer, WebsiteUserSerializer,UpdateUserSerializer, ShoppingCartSerializer, CartItemSerializer
+>>>>>>> 94b72a86c21be8a6422671e86c79749184ec44f0
 from rest_framework.response import Response
 from rest_framework import views, response, exceptions, permissions, viewsets, status, generics
 from bookstore_app import serializers as user_serializers, user_services
@@ -41,6 +46,14 @@ class WebsiteUserViewSet(viewsets.ModelViewSet):
     queryset = WebsiteUser.objects.all()
     serializer_class = WebsiteUserSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+class ShoppingCartViewSet(viewsets.ModelViewSet):
+    queryset = ShoppingCart.objects.all()
+    serializer_class = ShoppingCartSerializer
+
+class CartItemViewSet(viewsets.ModelViewSet):
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
 
 #API endpoint that creates a user profile
 class RegisterAPI(views.APIView):
@@ -173,6 +186,7 @@ class PublisherBooksListView(generics.ListAPIView):
     serializer_class = BookSerializer
     context_object_name = 'books'
 
+<<<<<<< HEAD
     def get_queryset(self):
         publisher_name = unquote(self.kwargs['publisher_name'])
         publisher = Publisher.objects.get(name=publisher_name)
@@ -181,3 +195,32 @@ class PublisherBooksListView(generics.ListAPIView):
         for book in books:
             book.price = book.price * discount_factor
         return books
+=======
+        user.credit_card_number = credit_card_number
+        user.save()
+        
+        return response.Response(data={"Credit Card": "created"})
+
+class CartOwnerID(generics.ListAPIView):
+    serializer_class = ShoppingCartSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        try:
+            user_profile = WebsiteUser.objects.get(pk=user_id)
+        except WebsiteUser.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        user_cart = ShoppingCart.objects.filter(owner=user_profile)
+        return user_cart
+    
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        if not queryset.exists():
+            message = "There is no shopping cart found for the specified user."
+            return Response({'message': message})
+        
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+>>>>>>> 94b72a86c21be8a6422671e86c79749184ec44f0
