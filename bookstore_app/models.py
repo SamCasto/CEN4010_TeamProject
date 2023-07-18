@@ -43,7 +43,6 @@ class WebsiteUser(auth_models.AbstractUser):
 
     objects = BaseUserManager()
 
-
 class Book(models.Model):
     isbn = models.CharField(max_length=13, primary_key=True)
     title = models.CharField(max_length=255,default="")
@@ -54,13 +53,18 @@ class Book(models.Model):
     publisher = models.ForeignKey('Publisher', on_delete=models.CASCADE, default=1)
     yearPublished = models.IntegerField(default=1900)
     copiesSold = models.IntegerField(default=0)
-    # Other fields...
+    bookRating = models.FloatField(default = 0.0)
+
+    def discounted_price(self):
+        discount_factor = 1 - (self.publisher.discount_percentage / 100)
+        return self.price * discount_factor
 
     def __str__(self):
         return self.title
 
 class Publisher(models.Model):
     name = models.CharField(max_length=255)
+    discount = models.DecimalField(max_digits=5, decimal_places=2, default = 0.0)
 
     def __str__(self):
         return self.name
@@ -80,7 +84,7 @@ class Rating(models.Model):
         validators=[MinValueValidator(1.0), MaxValueValidator(5.0)]
     )
     dateStamp = models.DateField(auto_now_add=True)
-    book = models.ForeignKey('Book', on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='ratings')
     user = models.ForeignKey('WebsiteUser', on_delete=models.CASCADE)
 
     def __str__(self):
@@ -113,3 +117,4 @@ class BookInWishlist(models.Model):
 class ShoppingCart(models.Model):
     user = models.OneToOneField(WebsiteUser, on_delete=models.CASCADE)
     books = models.ManyToManyField(Book)
+

@@ -1,20 +1,21 @@
 from rest_framework import serializers
-from .models import Book, Author, Publisher, WebsiteUser
+from .models import Book, Author, Publisher, WebsiteUser, Rating
 import locale
 from . import user_services
 
-class BookSerializer(serializers.HyperlinkedModelSerializer):
-    copies_sold = serializers.IntegerField(required=False, allow_null=True)
-    
-    #copies_sold will be serialized and displayed with the comma separator, while still allowing None values and accepting empty input.
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        formatted_copies_sold = locale.format_string("%d", instance.copies_sold, grouping=True) if instance.copies_sold is not None else None
-        representation['copies_sold'] = formatted_copies_sold
-        return representation
+class RatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ('rating', 'dateStamp', 'user')
+
+class BookSerializer(serializers.ModelSerializer):
+    publisher = serializers.StringRelatedField()
+    author = serializers.StringRelatedField()
+    rating = RatingSerializer(many=True, read_only = True)
     class Meta:
         model = Book
         fields = '__all__'
+        depth = 1
 
 class PublisherSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -41,3 +42,6 @@ class WebsiteUserSerializer(serializers.Serializer):
     def to_internal_value(self, data):
         data = super().to_internal_value(data)
         return user_services.UserDataClass(**data)
+    
+
+
