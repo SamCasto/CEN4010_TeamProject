@@ -1,9 +1,9 @@
 from bookstore_app.models import Book, Author, Publisher, WebsiteUser
-from bookstore_app.serializers import BookSerializer, AuthorSerializer, PublisherSerializer, WebsiteUserSerializer
+from bookstore_app.serializers import BookSerializer, AuthorSerializer, PublisherSerializer, WebsiteUserSerializer,UpdateUserSerializer
 from rest_framework.response import Response
 from rest_framework import views, response, exceptions, permissions, viewsets, status, generics
 from bookstore_app import serializers as user_serializers, user_services
-from bookstore_app import authentication
+from bookstore_app import authentication, models
 from rest_framework.permissions import IsAdminUser
 
 
@@ -61,24 +61,13 @@ class BookDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
-class BookAuthorID(generics.ListAPIView):
+class BookAuthor(generics.ListAPIView):
     serializer_class = BookSerializer
 
     def get_queryset(self):
-        author_id = self.kwargs['author_id']
-        books = Book.objects.filter(author__id=author_id)
+        author = self.kwargs['author']
+        books = Book.objects.filter(author__iexact=author)
         return books
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-
-        if not queryset.exists():
-            # Return a custom response if there are no books
-            message = "No books found for the specified author."
-            return Response({'message': message})
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
 
 #API endpoint that lets users log into their account, if they have one   
 class LoginAPI(views.APIView):
@@ -119,10 +108,12 @@ class WebsiteUserAPI(views.APIView):
 
         return response.Response(serializer.data)
 
+
+
 #Logout endpoint  
 class LogoutAPI(views.APIView):
 
-    authentication_classes = (authentication.CustomUserAuthentication, )
+    authentication_classes = (authentication.CustomUserAuthentication,)
     permission_classes = (permissions.IsAuthenticated, )
 
     def post(self, request):
@@ -138,10 +129,3 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = WebsiteUser.objects.all().order_by('-date_joined')
     serializer_class = WebsiteUserSerializer
     permission_classes = [IsAdminUser]
-
-class BookListByGenreView(generics.ListAPIView):
-    serializer_class = BookSerializer
-
-    def get_queryset(self):
-        genre = self.kwargs['genre']
-        return Book.objects.filter(genre=genre)
