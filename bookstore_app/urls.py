@@ -8,4 +8,5 @@ urlpatterns = [
     path('logout/', views.LogoutAPI.as_view(), name='logout'),
     path('update/<int:pk>/', views.UpdateProfileView.as_view(), name='auth_update_profile'),
     path('credit-card/', views.CreateCreditCard.as_view(), name='credit_card'),
+    path('cart/<int:user_id>/', views.CartOwnerID.as_view(), name='cart_summary'),
 ]
