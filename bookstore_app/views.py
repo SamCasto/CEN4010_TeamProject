@@ -1,10 +1,16 @@
+from urllib.parse import unquote
+from django.db.models import F
+from django.shortcuts import render
+from django.http import JsonResponse
+from decimal import Decimal
 from bookstore_app.models import Book, Author, Publisher, WebsiteUser
-from bookstore_app.serializers import BookSerializer, AuthorSerializer, PublisherSerializer, WebsiteUserSerializer,UpdateUserSerializer
+from bookstore_app.serializers import BookSerializer, AuthorSerializer, PublisherSerializer, WebsiteUserSerializer
 from rest_framework.response import Response
 from rest_framework import views, response, exceptions, permissions, viewsets, status, generics
 from bookstore_app import serializers as user_serializers, user_services
-from bookstore_app import authentication, models
+from bookstore_app import authentication
 from rest_framework.permissions import IsAdminUser
+
 
 
 class BookViewSet(viewsets.ModelViewSet):
@@ -61,13 +67,23 @@ class BookDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
-class BookAuthor(generics.ListAPIView):
+class BookAuthorID(generics.ListAPIView):
     serializer_class = BookSerializer
 
     def get_queryset(self):
-        author = self.kwargs['author']
-        books = Book.objects.filter(author__iexact=author)
+        author_id = self.kwargs['author_id']
+        books = Book.objects.filter(author__id=author_id)
         return books
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        if not queryset.exists():
+            # Return a custom response if there are no books
+            message = "No books found for the specified author."
+            return Response({'message': message})
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 #API endpoint that lets users log into their account, if they have one   
 class LoginAPI(views.APIView):
@@ -108,12 +124,10 @@ class WebsiteUserAPI(views.APIView):
 
         return response.Response(serializer.data)
 
-
-
 #Logout endpoint  
 class LogoutAPI(views.APIView):
 
-    authentication_classes = (authentication.CustomUserAuthentication,)
+    authentication_classes = (authentication.CustomUserAuthentication, )
     permission_classes = (permissions.IsAuthenticated, )
 
     def post(self, request):
@@ -129,3 +143,41 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = WebsiteUser.objects.all().order_by('-date_joined')
     serializer_class = WebsiteUserSerializer
     permission_classes = [IsAdminUser]
+
+class BookListByGenreView(generics.ListAPIView):
+    serializer_class = BookSerializer
+    queryset = Book.objects.all()
+    context_object_name = 'books'
+
+    def get_queryset(self):
+        genre = unquote(self.kwargs['genre'])
+        return Book.objects.filter(genre=genre)
+
+class TopBooksListView(generics.ListAPIView):
+    serializer_class = BookSerializer
+    context_object_name = 'books'
+
+    def get_queryset(self):
+        return Book.objects.order_by('-copiesSold')[:10]
+
+class BookListByRatingView(generics.ListAPIView):
+    serializer_class = BookSerializer
+    queryset = Book.objects.all()
+    context_object_name = 'books'
+
+    def get_queryset(self):
+        rating = self.kwargs['rating']
+        return Book.objects.filter(bookRating__gte=rating).order_by('-bookRating')
+    
+class PublisherBooksListView(generics.ListAPIView):
+    serializer_class = BookSerializer
+    context_object_name = 'books'
+
+    def get_queryset(self):
+        publisher_name = unquote(self.kwargs['publisher_name'])
+        publisher = Publisher.objects.get(name=publisher_name)
+        discount_factor = 1 - (publisher.discount / 100)
+        books = Book.objects.filter(publisher=publisher)
+        for book in books:
+            book.price = book.price * discount_factor
+        return books
