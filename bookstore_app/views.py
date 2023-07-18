@@ -1,3 +1,11 @@
+# From Bryan's merge
+from urllib.parse import unquote
+from django.db.models import F
+from django.shortcuts import render
+from django.http import JsonResponse
+from decimal import Decimal
+
+# Before merge
 from bookstore_app.models import Book, Author, Publisher, WebsiteUser, ShoppingCart, CartItem
 from bookstore_app.serializers import BookSerializer, AuthorSerializer, PublisherSerializer, WebsiteUserSerializer,UpdateUserSerializer, ShoppingCartSerializer, CartItemSerializer
 from rest_framework.response import Response
@@ -70,13 +78,14 @@ class BookDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
-class BookAuthorID(generics.ListAPIView):
+class BookAuthor(generics.ListAPIView):
     serializer_class = BookSerializer
 
     def get_queryset(self):
         author_id = self.kwargs['author_id']
         books = Book.objects.filter(author__id=author_id)
         return books
+    
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
 
@@ -147,6 +156,33 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = WebsiteUserSerializer
     permission_classes = [IsAdminUser]
 
+#API view that lets website users update their profile info
+class UpdateProfileView(generics.UpdateAPIView):
+
+    queryset = WebsiteUser.objects.all()
+    authentication_classes = (authentication.CustomUserAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = UpdateUserSerializer
+
+
+class CreateCreditCard(views.APIView):
+    queryset = models.WebsiteUser.objects.all()
+    authentication_classes = (authentication.CustomUserAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = WebsiteUserSerializer
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        credit_card_number = request.data.get("credit_card_number")
+
+        if not credit_card_number:
+            return Response({"error": "Credit card number is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.credit_card_number = credit_card_number
+        user.save()
+        
+        return response.Response(data={"Credit Card": "created"})
+
 class BookListByGenreView(generics.ListAPIView):
     serializer_class = BookSerializer
     queryset = Book.objects.all()
@@ -176,7 +212,6 @@ class PublisherBooksListView(generics.ListAPIView):
     serializer_class = BookSerializer
     context_object_name = 'books'
 
-<<<<<<< HEAD
     def get_queryset(self):
         publisher_name = unquote(self.kwargs['publisher_name'])
         publisher = Publisher.objects.get(name=publisher_name)
@@ -185,11 +220,7 @@ class PublisherBooksListView(generics.ListAPIView):
         for book in books:
             book.price = book.price * discount_factor
         return books
-=======
-        user.credit_card_number = credit_card_number
-        user.save()
         
-        return response.Response(data={"Credit Card": "created"})
 
 class CartOwnerID(generics.ListAPIView):
     serializer_class = ShoppingCartSerializer
@@ -213,4 +244,3 @@ class CartOwnerID(generics.ListAPIView):
         
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
->>>>>>> 94b72a86c21be8a6422671e86c79749184ec44f0
