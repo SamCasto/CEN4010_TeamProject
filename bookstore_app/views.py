@@ -1,15 +1,5 @@
-<<<<<<< HEAD
-from urllib.parse import unquote
-from django.db.models import F
-from django.shortcuts import render
-from django.http import JsonResponse
-from decimal import Decimal
-from bookstore_app.models import Book, Author, Publisher, WebsiteUser
-from bookstore_app.serializers import BookSerializer, AuthorSerializer, PublisherSerializer, WebsiteUserSerializer
-=======
 from bookstore_app.models import Book, Author, Publisher, WebsiteUser, ShoppingCart, CartItem
 from bookstore_app.serializers import BookSerializer, AuthorSerializer, PublisherSerializer, WebsiteUserSerializer,UpdateUserSerializer, ShoppingCartSerializer, CartItemSerializer
->>>>>>> 94b72a86c21be8a6422671e86c79749184ec44f0
 from rest_framework.response import Response
 from rest_framework import views, response, exceptions, permissions, viewsets, status, generics
 from bookstore_app import serializers as user_serializers, user_services
