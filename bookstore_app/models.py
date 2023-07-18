@@ -117,7 +117,6 @@ class ShoppingCart(models.Model):
     owner = models.OneToOneField(
         WebsiteUser,
         on_delete=models.CASCADE,
-        primary_key=True,
     )
 
     items = models.ManyToManyField(
