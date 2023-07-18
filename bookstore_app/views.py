@@ -1,3 +1,8 @@
+from urllib.parse import unquote
+from django.db.models import F
+from django.shortcuts import render
+from django.http import JsonResponse
+from decimal import Decimal
 from bookstore_app.models import Book, Author, Publisher, WebsiteUser
 from bookstore_app.serializers import BookSerializer, AuthorSerializer, PublisherSerializer, WebsiteUserSerializer
 from rest_framework.response import Response
@@ -5,6 +10,7 @@ from rest_framework import views, response, exceptions, permissions, viewsets, s
 from bookstore_app import serializers as user_serializers, user_services
 from bookstore_app import authentication
 from rest_framework.permissions import IsAdminUser
+
 
 
 class BookViewSet(viewsets.ModelViewSet):
@@ -127,3 +133,41 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = WebsiteUser.objects.all().order_by('-date_joined')
     serializer_class = WebsiteUserSerializer
     permission_classes = [IsAdminUser]
+
+class BookListByGenreView(generics.ListAPIView):
+    serializer_class = BookSerializer
+    queryset = Book.objects.all()
+    context_object_name = 'books'
+
+    def get_queryset(self):
+        genre = unquote(self.kwargs['genre'])
+        return Book.objects.filter(genre=genre)
+
+class TopBooksListView(generics.ListAPIView):
+    serializer_class = BookSerializer
+    context_object_name = 'books'
+
+    def get_queryset(self):
+        return Book.objects.order_by('-copiesSold')[:10]
+
+class BookListByRatingView(generics.ListAPIView):
+    serializer_class = BookSerializer
+    queryset = Book.objects.all()
+    context_object_name = 'books'
+
+    def get_queryset(self):
+        rating = self.kwargs['rating']
+        return Book.objects.filter(bookRating__gte=rating).order_by('-bookRating')
+    
+class PublisherBooksListView(generics.ListAPIView):
+    serializer_class = BookSerializer
+    context_object_name = 'books'
+
+    def get_queryset(self):
+        publisher_name = unquote(self.kwargs['publisher_name'])
+        publisher = Publisher.objects.get(name=publisher_name)
+        discount_factor = 1 - (publisher.discount / 100)
+        books = Book.objects.filter(publisher=publisher)
+        for book in books:
+            book.price = book.price * discount_factor
+        return books
