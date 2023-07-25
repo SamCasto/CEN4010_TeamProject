@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\samue\Desktop\DjangoStuff\CEN4010_TeamProject\env
+set VIRTUAL_ENV=C:\Users\Bwyan\OneDrive\Desktop\CEN4010-Project\CEN4010_TeamProject\env
 
 if not defined PROMPT set PROMPT=$P$G
 
