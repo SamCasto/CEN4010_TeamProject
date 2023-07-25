@@ -16,7 +16,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('books/', views.BookList.as_view(), name='book-list'),
     path('books/<int:pk>/', views.BookDetail.as_view(), name='book-detail'),
-    path('author/<int:author_id>/books/', views.BookAuthorID.as_view(), name='books_by_author'),
+    #path('author/<int:author_id>/books/', views.BookAuthorID.as_view(), name='books_by_author'),
     path('bookstore/', include('bookstore_app.urls')),
     path('books/<str:genre>/', views.BookListByGenreView.as_view(), name='book_list_by_genre'),
     path('top-books/', views.TopBooksListView.as_view(), name='top_books'),
