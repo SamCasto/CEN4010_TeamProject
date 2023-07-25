@@ -171,34 +171,3 @@ class PublisherBooksListView(generics.ListAPIView):
         for book in books:
             book.price = book.price * discount_factor
         return books
-<<<<<<< Updated upstream
-=======
-
-
-#API view that lets website users update their profile info
-class UpdateProfileView(generics.UpdateAPIView):
-
-    queryset = WebsiteUser.objects.all()
-    authentication_classes = (authentication.CustomUserAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = UpdateUserSerializer
-
-#API view that lets users create/update credit card
-class CreateCreditCard(views.APIView):
-    queryset = models.WebsiteUser.objects.all()
-    authentication_classes = (authentication.CustomUserAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = WebsiteUserSerializer
-
-    def post(self, request, *args, **kwargs):
-        user = request.user
-        credit_card_number = request.data.get("credit_card_number")
-
-        if not credit_card_number:
-            return Response({"error": "Credit card number is required."}, status=status.HTTP_400_BAD_REQUEST)
-
-        user.credit_card_number = credit_card_number
-        user.save()
-        
-        return response.Response(data={"Credit Card": "created"})
->>>>>>> Stashed changes
