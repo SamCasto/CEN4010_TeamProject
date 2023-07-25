@@ -26,7 +26,7 @@ class BookViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 class BookList(generics.ListCreateAPIView):
-    queryset = Book.objects.all()
+    queryset = Book.objects.all()   
     serializer_class = BookSerializer
 
 class PublisherViewSet(viewsets.ModelViewSet):
