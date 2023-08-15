@@ -99,9 +99,10 @@ o HTTP Request Type: DELETE
 o Parameters Sent: Book Id, User Id
 o Response Data: None
 
-Samuel Casto:
+
 4
 Book Details Users can see informative and enticing details about a book
+Developer: Sam Casto
 REST API Actions:
    An administrator must be able to create a book with the book ISBN, book
 name, book description, price, author, genre, publisher , year published and
