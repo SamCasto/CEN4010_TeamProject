@@ -102,10 +102,11 @@ o Response Data: None
 
 4
 
+Book Details Users can see informative and enticing details about a book 
 
-Book Details Users can see informative and enticing details about a book <br>
-Developer: Sam Casto <br>
-REST API Actions: <br>
+Developer: Sam Casto 
+
+REST API Actions: 
    An administrator must be able to create a book with the book ISBN, book
 name, book description, price, author, genre, publisher , year published and
 copies sold.
