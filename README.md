@@ -100,7 +100,9 @@ o Parameters Sent: Book Id, User Id
 o Response Data: None
 
 
-4 <br>
+4
+
+
 Book Details Users can see informative and enticing details about a book <br>
 Developer: Sam Casto <br>
 REST API Actions: <br>
