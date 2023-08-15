@@ -99,6 +99,7 @@ o HTTP Request Type: DELETE
 o Parameters Sent: Book Id, User Id
 o Response Data: None
 
+Samuel Casto:
 4
 Book Details Users can see informative and enticing details about a book
 REST API Actions:
